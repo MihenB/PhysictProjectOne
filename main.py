@@ -1,16 +1,44 @@
-# This is a sample Python script.
+from matplotlib import pyplot
+from numpy import radians
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import electrostatics
+from electrostatics import PointCharge, ElectricField, Potential, GaussianCircle
+from electrostatics import finalize_plot
 
+XMIN, XMAX = -40, 40
+YMIN, YMAX = -30, 30
+ZOOM = 6
+XOFFSET = 0
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+electrostatics.init(XMIN, XMAX, YMIN, YMAX, ZOOM, XOFFSET)
 
+charges = [
+           PointCharge(2, [2, 2]),
+           PointCharge(2, [-2, -2]),
+           PointCharge(-2, [2, -2]),
+           PointCharge(-2, [-2, 2]),
+            PointCharge(2, [0, 0])
+]
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+field = ElectricField(charges)
+potential = Potential(charges)
+# Set up the Gaussian surfaces
+g = [GaussianCircle(charges[i].x, 0.1) for i in range(len(charges))]
+g[2].a0 = radians(90)
+g[3].a0 = radians(-90)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Create the field lines
+fieldlines = []
+for g_ in g[0:4]:
+    for x in g_.fluxpoints(field, 12):
+        fieldlines.append(field.line(x))
+
+#field.plot()
+for fieldline in fieldlines:
+    fieldline.plot()
+for charge in charges:
+    charge.plot()
+potential.plot()
+finalize_plot()
+
+pyplot.show()
