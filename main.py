@@ -17,7 +17,7 @@ charges = [
            PointCharge(2, [-2, -2]),
            PointCharge(-2, [2, -2]),
            PointCharge(-2, [-2, 2]),
-            PointCharge(2, [0, 0])
+
 ]
 
 field = ElectricField(charges)
@@ -29,7 +29,7 @@ g[3].a0 = radians(-90)
 
 # Create the field lines
 fieldlines = []
-for g_ in g[0:4]:
+for g_ in g[0:len(g)-1]:
     for x in g_.fluxpoints(field, 12):
         fieldlines.append(field.line(x))
 
